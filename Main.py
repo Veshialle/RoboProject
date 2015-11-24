@@ -11,55 +11,40 @@ for url in f2.readlines():
 
 def crawler(maxite):
     count = 1
-    while 1:
-        if count == 1:
-            f1.write("---------- VISITED VIDEOS ----------\n\n")
-        for url in links:
-            print(url)
-            source_code = requests.get(str(url))
-            plain_text = source_code.text
-            soup = BeautifulSoup(plain_text, "html.parser")
-            for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
-                title1 = title.get('title')
-                f1.write("Title: " + title1 + "\n")
-
-            for date in soup.findAll("strong", {'class': 'watch-time-text'}):
-                date1 = date.string
-                f1.write("date: " + date1 + "\n")
-
-            for views in soup.findAll("div", {'class': 'watch-view-count'}):
-                views1 = views.string
-                f1.write("Views: " + views1 + "\n")
-
-            for desc in soup.find('p', {'id': 'eow-description'}):
-                desc1 = desc.string
-                f1.write("Description: " + desc1 + "\n")
-            f1.write("\n \n")
-
-            for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
-                link1 = "\n" + "https://www.youtube.com" + link.get('href')
-                print(link1)
-                links.append(link1)
-
+    if count == 1:
+        f1.write("---------- VISITED VIDEOS ----------\n\n")
+    for url in links:
+        #print(url)
         if count == maxite:
             print("done!")
             break
+        source_code = requests.get(str(url))
+        plain_text = source_code.text
+        soup = BeautifulSoup(plain_text, "html.parser")
+        for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
+            title1 = title.get('title')
+            print(title1)
+            f1.write("Title: " + title1 + "\n")
+
+        for date in soup.findAll("strong", {'class': 'watch-time-text'}):
+            date1 = date.string
+            print(date1)
+            f1.write("date: " + date1 + "\n")
+
+        for views in soup.findAll("div", {'class': 'watch-view-count'}):
+            views1 = views.string
+            print(views1)
+            f1.write("Views: " + views1 + "\n")
+        f1.write("\n \n")
+
+        for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
+            link1 = "https://www.youtube.com" + link.get('href')
+            links.append(link1)
+            print(link1)
+
         count += 1
 
 
-def get_single_item_data(item_url):
-    source_code = requests.get(item_url)
-    plain_text = source_code.text
-    soup = BeautifulSoup(plain_text)
-    # if you want to gather information from that page
-    for item_name in soup.findAll('div', {'class': 'i-name'}):
-        print(item_name.string)
-    # if you want to gather links for a web crawler
-    for link in soup.findAll('a'):
-        href = "https://buckysroom.org" + link.get('href')
-        print(href)
-
-
-crawler(4)
+crawler(10)
 f1.close()
 f2.close()
