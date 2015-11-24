@@ -38,6 +38,7 @@ def crawler(maxite):
 
             for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
                 link1 = "\n" + "https://www.youtube.com" + link.get('href')
+                print(link1)
                 links.append(link1)
 
         if count == maxite:
@@ -59,6 +60,6 @@ def get_single_item_data(item_url):
         print(href)
 
 
-crawler(2)
+crawler(4)
 f1.close()
 f2.close()
