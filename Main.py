@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-f1 = open('data.txt', 'w')
-f2 = open('sources.txt', 'r')
+f1 = open('results.txt', 'w')
+f2 = open('sources.txt', 'r+')
 links = []
 
 for url in f2.readlines():
@@ -16,13 +16,16 @@ def crawler(maxite):
             f1.write("---------- VISITED VIDEOS ----------\n\n")
         for url in links:
             print(url)
-            #url = "https://www.youtube.com/watch?v=vabnZ9-ex7o"
             source_code = requests.get(str(url))
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, "html.parser")
             for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
                 title1 = title.get('title')
                 f1.write("Title: " + title1 + "\n")
+
+            for date in soup.findAll("strong", {'class': 'watch-time-text'}):
+                date1 = date.string
+                f1.write("date: " + date1 + "\n")
 
             for views in soup.findAll("div", {'class': 'watch-view-count'}):
                 views1 = views.string
@@ -33,6 +36,9 @@ def crawler(maxite):
                 f1.write("Description: " + desc1 + "\n")
             f1.write("\n \n")
 
+            for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
+                link1 = "\n" + "https://www.youtube.com" + link.get('href')
+                links.append(link1)
 
         if count == maxite:
             print("done!")
@@ -53,6 +59,6 @@ def get_single_item_data(item_url):
         print(href)
 
 
-crawler(1)
+crawler(2)
 f1.close()
 f2.close()
