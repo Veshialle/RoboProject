@@ -1,18 +1,61 @@
 import requests
 from bs4 import BeautifulSoup
 
-
-f1 = open('results.txt', 'w')  # file used to store the results
+f1 = open('results.txt', 'a+')  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
 links = []
 visitedlinks = []
 
 
+def calculateaverage(date, views):
+    totdays = 0
+    if date[0] == 'P':
+        newdate = date[14:]  # erasing "Pubblicato il "
+
+    elif date[0] == 'C':
+        newdate = date[12:]  # erasing "Caricato il "
+
+    day = int(newdate[:2])  # extracting number of the day
+    month = newdate[3:6]  # extracting number of days from the past months
+    if month == 'gen':
+        month = 00
+    elif month == 'feb':
+        month = 31
+    elif month == 'mar':
+        month = 59
+    elif month == 'apr':
+        month = 90
+    elif month == 'mag':
+        month = 120
+    elif month == 'giu':
+        month = 151
+    elif month == 'lug':
+        month = 181
+    elif month == 'ago':
+        month = 212
+    elif month == 'set':
+        month = 243
+    elif month == 'ott':
+        month = 273
+    elif month == 'nov':
+        month = 304
+    elif month == 'dec':
+        month = 334
+    year = 365 * int(newdate[7:11])  # extracting year
+    olddays = (day + month + year)  # total number of days from the day christ was born
+                                    # till the day the video was uplloaded on youtube
+
+    '''
+    finding a way to get the current date
+    translate it into the total number of days since christ was born and name it 'currentdays'
+    average = views/(currentdays - olddays)
+    return average
+    '''
+
+
 def crawler(maxite):
     count = 0
-    if count == 0:  # == if this is the first iteration
-        f1.write("---------- VISITED VIDEOS ----------\n\n")
     for url in links:
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
@@ -39,6 +82,9 @@ def crawler(maxite):
             for views in soup.findAll("div", {'class': 'watch-view-count'}):
                 views1 = views.string
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
+                averageviews = calculateaverage(date1, views1)
+                # f1.write("Average views per day: " + str(averageviews) + "\n")
+                # print(str(averageviews))
                 f1.write("\n \n")
 
             # finding all the links of the correlated videos
@@ -49,10 +95,12 @@ def crawler(maxite):
                     f2.write("\n" + link1)       # and write it on the source file
 
         elif url in visitedlinks:
-            maxite +=1
+            maxite += 1
 
         count += 1
 
+
+f1.seek(0)
 f2.seek(0)
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
     links.append(url1)
