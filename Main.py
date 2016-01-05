@@ -1,6 +1,5 @@
 import requests
-import time
-import calendar
+import PRobot_HandlingData
 from bs4 import BeautifulSoup
 
 f1 = open('results.txt', 'a+')  # file used to store the results
@@ -9,60 +8,6 @@ f3 = open('seen.txt', 'a+')  # file used to store the visited urls
 links = []
 visitedlinks = []
 
-
-def calculatedate(date):
-    totdays = 0
-    if date[0] == 'P':
-        newdate = date[14:]  # erasing "Pubblicato il "
-
-    elif date[0] == 'C':
-        newdate = date[12:]  # erasing "Caricato il "
-
-    day = int(newdate[:2])  # extracting number of the day
-    Wmonth = newdate[3:6]  # extracting number of days from the past months
-    if (Wmonth == 'gen') or (Wmonth == 'Jan'):
-        month = 00
-    elif (Wmonth == 'feb') or (Wmonth == 'Feb'):
-        month = 31
-    elif (Wmonth == 'mar') or (Wmonth == 'Mar'):
-        month = 59
-    elif (Wmonth == 'apr') or (Wmonth == 'Apr'):
-        month = 90
-    elif (Wmonth == 'mag') or (Wmonth == 'May'):
-        month = 120
-    elif (Wmonth == 'giu') or (Wmonth == 'Jun'):
-        month = 151
-    elif (Wmonth == 'lug') or (Wmonth == 'Jul'):
-        month = 181
-    elif (Wmonth == 'ago') or (Wmonth == 'Aug'):
-        month = 212
-    elif (Wmonth == 'set') or (Wmonth == 'Sep'):
-        month = 243
-    elif (Wmonth == 'ott') or (Wmonth == 'Oct'):
-        month = 273
-    elif (Wmonth == 'nov') or (Wmonth == 'Nov'):
-        month = 304
-    elif (Wmonth == 'dic') or (Wmonth == 'Dec'):
-        month = 334
-    year = int(newdate[7:11])  # extracting year
-
-    if (calendar.isleap(year)) and (month > 31):
-        month += 1
-
-    year = (year - 2005)            # subracted the year when youtube came to the great world of internet and coverted
-    moredaysforme = year / 4        # counting bissextile years from 2005 to the year before this
-    year = year * 365 + moredaysforme   # this conversion is not optimized for all the non-bissextile years
-    days = (day + month + year)  # total number of days from the day christ was born
-                                    # till the day the video was uploaded on youtube
-    return days
-
-def calculateaverage(date, views):
-    chargeddate = calculatedate(date)
-    today = calculatedate(time.strftime("%d/%b/%Y"))
-    totaldays = today - chargeddate
-    averageviews = views / totaldays
-    print (averageviews)
-    return averageviews
 
 def crawler(maxite):
     count = 0
@@ -92,7 +37,7 @@ def crawler(maxite):
             for views in soup.findAll("div", {'class': 'watch-view-count'}):
                 views1 = views.string
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
-                averageviews = calculateaverage(date1, views1)
+                averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
                 print(str(averageviews))
                 f1.write("\n \n")
