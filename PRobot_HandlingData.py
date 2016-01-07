@@ -42,7 +42,7 @@ def calculatedate(date):
         month = 334
     year = int(newdate[7:11])  # extracting year
 
-    if (calendar.isleap(year)) and (month > 31):
+    if (calendar.isleap(year)) and (month > 59):
         month += 1
 
     year = (year - 2005)            # subracted the year when youtube came to the great world of internet and coverted
