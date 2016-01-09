@@ -1,5 +1,7 @@
 import time
 import calendar
+import urllib.request
+import os
 
 def calculatedate(date):
     month = 0
@@ -76,5 +78,21 @@ def calculateaverage(date, views):
     averageviews = intviews / totaldays
     print(averageviews)
     return averageviews
+
+
+def downloadimage(url, title):
+    resource = urllib.request.urlopen(url)
+    directory = "images/"
+    #ceck of the directory images
+    try:
+        os.stat(directory)
+    except:
+        os.mkdir(directory)
+    path = directory + title + ".jpg"
+    output = open(path,"wb")
+    output.write(resource.read())
+    output.close()
+    return path
+
 
 

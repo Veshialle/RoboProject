@@ -12,6 +12,8 @@ visitedlinks = []
 def crawler(maxite):
     count = 0
     for url in links:
+        if url=='':
+            url = 'https://www.youtube.com/watch?v=vabnZ9-ex7o' #Backup Url (in case of empty source.txt
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
             break
@@ -40,7 +42,13 @@ def crawler(maxite):
                 averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
                 print(str(averageviews))
+            #downloading the preview of the video
+            for img in soup.findAll('meta',{'property': "og:image"}):
+                img1 = img.get('content')
+                path = PRobot_HandlingData.downloadimage(img1, title1)
+                f1.write("Directory and name of the downloaded image: " + path + "\n")
                 f1.write("\n \n")
+
 
             # finding all the links of the correlated videos
             for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
@@ -48,6 +56,7 @@ def crawler(maxite):
                 if link1 not in visitedlinks:  # checking if the link has already been visited
                     links.append(link1)        # if not, add it to the list
                     f2.write("\n" + link1)       # and write it on the source file
+
 
         elif url in visitedlinks:
             maxite += 1
@@ -65,7 +74,7 @@ for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
 
-crawler(5)  # starting the crawler
+crawler(20)  # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()
