@@ -2,6 +2,7 @@ import time
 import calendar
 import urllib.request
 import os
+import string
 
 def calculatedate(date):
     month = 0
@@ -54,19 +55,7 @@ def calculatedate(date):
                                     # till the day the video was uploaded on youtube
     return days
 def convertviews(views):
-    intviews = 0
-    cont = 0
-    for i in views:
-        if i != ".":
-            intviews += int(i) * (10**cont)         #converted the string with dot to a mirror number
-            cont += 1
-    strviews = str(intviews)
-    print(strviews)
-    cont1 = 0
-    intviews = 0
-    for x in strviews:
-        intviews += int(x) * (10**cont1)            #re mirrored the number of views
-        cont1 += 1
+    intviews = int(views.replace(".",""))
     print(views)
     return intviews
 
@@ -88,11 +77,35 @@ def downloadimage(url, title):
         os.stat(directory)
     except:
         os.mkdir(directory)
-    path = directory + title + ".jpg"
+    title1 = title.replace('?', '')
+    title2 = title1.replace('/', '')
+    title3 = title2.replace('', '')
+    title4 = title3.replace(':', '')
+    title5 = title4.replace('*', '')
+    title6 = title5.replace('<', '')
+    title7 = title6.replace('>', '')
+    title8 = title7.replace('|', '')
+    title9 = title8.replace('"', '')
+    title10 = title9.replace("'", "")
+    path = directory + title10 + ".jpg"
     output = open(path,"wb")
     output.write(resource.read())
     output.close()
     return path
 
-
-
+def checksource():
+    try:
+        if os.stat('source.txt').st_size == 0:
+            f1 = open('source.txt', 'a+')  # file used to store the results
+            f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o')
+    except:
+        f1 = open('source.txt', 'a+')  # file used to store the results
+        f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o')
+'''
+def checkstring(string):
+    try:
+        string.decode('utf-8')
+        print("string is UTF-8, length %d bytes" % len(string))
+    except UnicodeError:
+        print("string is not UTF-8")
+'''

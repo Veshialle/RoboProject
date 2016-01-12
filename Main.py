@@ -8,12 +8,10 @@ f3 = open('seen.txt', 'a+')  # file used to store the visited urls
 links = []
 visitedlinks = []
 
-
 def crawler(maxite):
     count = 0
     for url in links:
-        if url=='':
-            url = 'https://www.youtube.com/watch?v=vabnZ9-ex7o' #Backup Url (in case of empty source.txt
+        print(url)
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
             break
@@ -66,15 +64,18 @@ def crawler(maxite):
 
 f1.seek(0)
 f2.seek(0)
+#initializing the source.txt file in case of the empty (or inexistent) file
+PRobot_HandlingData.checksource()
+
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
     links.append(url1)
-
+PRobot_HandlingData.checksource()
 f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' mode sets the pointer at the end)
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
 
-crawler(20)  # starting the crawler
+crawler(100) # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()
