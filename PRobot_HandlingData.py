@@ -81,7 +81,8 @@ def downloadimage(url, title):
     title7 = title6.replace('|', '')
     title8 = title7.replace('"', '')
     title9 = title8.replace("'", "")
-    path = directory + title9 + ".jpg"
+    title10 = title9.replace(chr(92), "")
+    path = directory + title10 + ".jpg"
     output = open(path, "wb")
     output.write(resource.read())
     output.close()
