@@ -1,8 +1,7 @@
 import requests
 import PRobot_HandlingData
 from bs4 import BeautifulSoup
-
-f1 = open('results.txt', 'a+')  # file used to store the results
+f1 = open('results.txt', 'a+', encoding='utf8' )  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
 links = []
@@ -11,7 +10,6 @@ visitedlinks = []
 def crawler(maxite):
     count = 0
     for url in links:
-        print(url)
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
             break
@@ -25,9 +23,7 @@ def crawler(maxite):
             # finding the title of the video
             for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
                 title1 = title.get('title')
-                print(title1)
                 f1.write("Title: " + title1 + "\n")  # writing on results.txt
-
             # finding the date of the video
             for date in soup.findAll("strong", {'class': 'watch-time-text'}):
                 date1 = date.string
@@ -39,14 +35,13 @@ def crawler(maxite):
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
                 averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
-                print(str(averageviews))
             #downloading the preview of the video
             for img in soup.findAll('meta',{'property': "og:image"}):
                 img1 = img.get('content')
                 path = PRobot_HandlingData.downloadimage(img1, title1)
                 f1.write("Directory and name of the downloaded image: " + path + "\n")
-                f1.write("\n \n")
-
+            f1.write("Link del video: " + url + "\n")
+            f1.write("\n \n")
 
             # finding all the links of the correlated videos
             for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
@@ -75,7 +70,7 @@ for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
 
-crawler(100) # starting the crawler
+crawler(10) # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()

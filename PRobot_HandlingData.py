@@ -2,12 +2,10 @@ import time
 import calendar
 import urllib.request
 import os
-import string
 
 def calculatedate(date):
     month = 0
     newdate = 0
-    print(date)
 
     if date[0] == 'P':
         newdate = date[14:]  # erasing "Pubblicato il "
@@ -16,7 +14,6 @@ def calculatedate(date):
         newdate = date[12:]  # erasing "Caricato il "
     else:
         newdate = date
-    print(newdate)
     day = int(newdate[:2])  # extracting number of the day
     Wmonth = newdate[3:6]  # extracting number of days from the past months
     if (Wmonth == 'gen') or (Wmonth == 'Jan'):
@@ -56,7 +53,6 @@ def calculatedate(date):
     return days
 def convertviews(views):
     intviews = int(views.replace(".",""))
-    print(views)
     return intviews
 
 def calculateaverage(date, views):
@@ -65,7 +61,6 @@ def calculateaverage(date, views):
     today = calculatedate(time.strftime("%d/%b/%Y"))
     totaldays = today - chargeddate
     averageviews = intviews / totaldays
-    print(averageviews)
     return averageviews
 
 
@@ -79,28 +74,23 @@ def downloadimage(url, title):
         os.mkdir(directory)
     title1 = title.replace('?', '')
     title2 = title1.replace('/', '')
-    title3 = title2.replace('', '')
-    title4 = title3.replace(':', '')
-    title5 = title4.replace('*', '')
-    title6 = title5.replace('<', '')
-    title7 = title6.replace('>', '')
-    title8 = title7.replace('|', '')
-    title9 = title8.replace('"', '')
-    title10 = title9.replace("'", "")
-    path = directory + title10 + ".jpg"
-    output = open(path,"wb")
+    title3 = title2.replace(':', '')
+    title4 = title3.replace('*', '')
+    title5 = title4.replace('<', '')
+    title6 = title5.replace('>', '')
+    title7 = title6.replace('|', '')
+    title8 = title7.replace('"', '')
+    title9 = title8.replace("'", "")
+    path = directory + title9 + ".jpg"
+    output = open(path, "wb")
     output.write(resource.read())
     output.close()
     return path
 
 def checksource():
-    try:
-        if os.stat('source.txt').st_size == 0:
-            f1 = open('source.txt', 'a+')  # file used to store the results
-            f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o')
-    except:
+    if os.stat('source.txt').st_size == 0:
         f1 = open('source.txt', 'a+')  # file used to store the results
-        f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o')
+        f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o' + "\n")
 '''
 def checkstring(string):
     try:
