@@ -92,11 +92,15 @@ def checksource():
     if os.stat('source.txt').st_size == 0:
         f1 = open('source.txt', 'a+')  # file used to store the results
         f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o' + "\n")
-'''
-def checkstring(string):
-    try:
-        string.decode('utf-8')
-        print("string is UTF-8, length %d bytes" % len(string))
-    except UnicodeError:
-        print("string is not UTF-8")
-'''
+def counter(start, now, iteration):
+    iter = iteration
+    now = time.time()
+    timetook = now - start
+    mins = timetook // 60
+    hour = mins // 60
+    minutes = mins % 60
+    seconds = timetook % 60
+    milliseconds = (seconds % 1) * (10 ** 3)
+    seconds = seconds // 1
+    orario = "The execution of " + str(iter) + " iteration took: " + str(int(hour)) + " hour, " + str(int(minutes)) + " minutes, " + str(int(seconds)) + " seconds " + str(int(milliseconds)) + " milliseconds\n"
+    return orario

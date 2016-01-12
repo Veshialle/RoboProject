@@ -1,9 +1,12 @@
 import requests
 import PRobot_HandlingData
+import time
 from bs4 import BeautifulSoup
+start = time.time()
 f1 = open('results.txt', 'a+', encoding='utf8' )  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
+f4 = open('log.txt', 'a') #the file log is used to store the time spent for the execution
 links = []
 visitedlinks = []
 
@@ -69,8 +72,10 @@ f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' 
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
-
-crawler(10) # starting the crawler
+iteration = 30000
+crawler(iteration) # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()
+f4.write(PRobot_HandlingData.counter(start, time.time() , iteration))
+
