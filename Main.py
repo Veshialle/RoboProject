@@ -3,6 +3,12 @@ import PRobot_HandlingData
 import time
 from bs4 import BeautifulSoup
 start = time.time()
+try:
+    iteration = int(input('Inserire il numero di iterazioni:'))
+except:
+    print("Valore non valido, far ripartire il crawler")
+    exit(1)
+
 f1 = open('results.txt', 'a+', encoding='utf8' )  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
@@ -19,7 +25,11 @@ def crawler(maxite):
         if url not in visitedlinks:  # == if i've not seen the video yet
             visitedlinks.append(url)
             f3.write(url + "\n")
-            source_code = requests.get(str(url))
+            try:
+                source_code = requests.get(str(url))
+            except:
+                print("Connessione persa, riprovare più tardi. Grazie!")
+                exit(1)
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, "html.parser")
 
@@ -31,6 +41,8 @@ def crawler(maxite):
             for date in soup.findAll("strong", {'class': 'watch-time-text'}):
                 date1 = date.string
                 f1.write("date: " + date1 + "\n")  # writing on results.txt
+                today = time.strftime("%d/%b/%Y")
+                f1.write("analized:" + today + "\n")
 
             # finding the number of views of the video
             for views in soup.findAll("div", {'class': 'watch-view-count'}):
@@ -72,7 +84,6 @@ f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' 
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
-iteration = 30000
 crawler(iteration) # starting the crawler
 f1.close()  # closing streams
 f2.close()

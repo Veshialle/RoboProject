@@ -52,7 +52,16 @@ def calculatedate(date):
                                     # till the day the video was uploaded on youtube
     return days
 def convertviews(views):
-    intviews = int(views.replace(".",""))
+    strviews = views.replace(".", "")
+    try:
+        intviews = int(strviews)
+    except:
+        count = 0
+        for i in strviews:
+            count += 1
+            if i == " ":
+                spazio = count - 1
+        intviews = int(strviews[:spazio])
     return intviews
 
 def calculateaverage(date, views):
@@ -65,7 +74,11 @@ def calculateaverage(date, views):
 
 
 def downloadimage(url, title):
-    resource = urllib.request.urlopen(url)
+    try:
+        resource = urllib.request.urlopen(url)
+    except:
+        print("Connessione persa, riprovare più tardi. Grazie!")
+        exit(1)
     directory = "images/"
     #ceck of the directory images
     try:
