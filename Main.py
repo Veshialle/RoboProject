@@ -1,58 +1,20 @@
 import requests
+import PRobot_HandlingData
+import time
 from bs4 import BeautifulSoup
+start = time.time()
+try:
+    iteration = int(input('Inserire il numero di iterazioni:'))
+except:
+    print("Valore non valido, far ripartire il crawler")
+    exit(1)
 
-f1 = open('results.txt', 'a+')  # file used to store the results
+f1 = open('results.txt', 'a+', encoding='utf8' )  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
+f4 = open('log.txt', 'a') #the file log is used to store the time spent for the execution
 links = []
 visitedlinks = []
-
-
-def calculateaverage(date, views):
-    totdays = 0
-    if date[0] == 'P':
-        newdate = date[14:]  # erasing "Pubblicato il "
-
-    elif date[0] == 'C':
-        newdate = date[12:]  # erasing "Caricato il "
-
-    day = int(newdate[:2])  # extracting number of the day
-    month = newdate[3:6]  # extracting number of days from the past months
-    if month == 'gen':
-        month = 00
-    elif month == 'feb':
-        month = 31
-    elif month == 'mar':
-        month = 59
-    elif month == 'apr':
-        month = 90
-    elif month == 'mag':
-        month = 120
-    elif month == 'giu':
-        month = 151
-    elif month == 'lug':
-        month = 181
-    elif month == 'ago':
-        month = 212
-    elif month == 'set':
-        month = 243
-    elif month == 'ott':
-        month = 273
-    elif month == 'nov':
-        month = 304
-    elif month == 'dec':
-        month = 334
-    year = 365 * int(newdate[7:11])  # extracting year
-    olddays = (day + month + year)  # total number of days from the day christ was born
-                                    # till the day the video was uplloaded on youtube
-
-    '''
-    finding a way to get the current date
-    translate it into the total number of days since christ was born and name it 'currentdays'
-    average = views/(currentdays - olddays)
-    return average
-    '''
-
 
 def crawler(maxite):
     count = 0
@@ -63,29 +25,38 @@ def crawler(maxite):
         if url not in visitedlinks:  # == if i've not seen the video yet
             visitedlinks.append(url)
             f3.write(url + "\n")
-            source_code = requests.get(str(url))
+            try:
+                source_code = requests.get(str(url))
+            except:
+                print("Connessione persa, riprovare più tardi. Grazie!")
+                exit(1)
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, "html.parser")
 
             # finding the title of the video
             for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
                 title1 = title.get('title')
-                print(title1)
                 f1.write("Title: " + title1 + "\n")  # writing on results.txt
-
             # finding the date of the video
             for date in soup.findAll("strong", {'class': 'watch-time-text'}):
                 date1 = date.string
                 f1.write("date: " + date1 + "\n")  # writing on results.txt
+                today = time.strftime("%d/%b/%Y")
+                f1.write("analized:" + today + "\n")
 
             # finding the number of views of the video
             for views in soup.findAll("div", {'class': 'watch-view-count'}):
                 views1 = views.string
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
-                averageviews = calculateaverage(date1, views1)
-                # f1.write("Average views per day: " + str(averageviews) + "\n")
-                # print(str(averageviews))
-                f1.write("\n \n")
+                averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
+                f1.write("Average views per day: " + str(averageviews) + "\n")
+            #downloading the preview of the video
+            for img in soup.findAll('meta',{'property': "og:image"}):
+                img1 = img.get('content')
+                path = PRobot_HandlingData.downloadimage(img1, title1)
+                f1.write("Directory and name of the downloaded image: " + path + "\n")
+            f1.write("Link del video: " + url + "\n")
+            f1.write("\n \n")
 
             # finding all the links of the correlated videos
             for link in soup.findAll('a', {'class': 'yt-uix-sessionlink  content-link spf-link        spf-link '}):
@@ -93,6 +64,7 @@ def crawler(maxite):
                 if link1 not in visitedlinks:  # checking if the link has already been visited
                     links.append(link1)        # if not, add it to the list
                     f2.write("\n" + link1)       # and write it on the source file
+
 
         elif url in visitedlinks:
             maxite += 1
@@ -102,15 +74,19 @@ def crawler(maxite):
 
 f1.seek(0)
 f2.seek(0)
+#initializing the source.txt file in case of the empty (or inexistent) file
+PRobot_HandlingData.checksource()
+
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
     links.append(url1)
-
+PRobot_HandlingData.checksource()
 f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' mode sets the pointer at the end)
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
-
-crawler(5)  # starting the crawler
+crawler(iteration) # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()
+f4.write(PRobot_HandlingData.counter(start, time.time() , iteration))
+
