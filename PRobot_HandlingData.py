@@ -3,6 +3,7 @@ import calendar
 import urllib.request
 import os
 
+
 def calculatedate(date):
     month = 0
     newdate = 0
@@ -51,6 +52,8 @@ def calculatedate(date):
     days = (day + month + year)  # total number of days from the day christ was born
                                     # till the day the video was uploaded on youtube
     return days
+
+
 def convertviews(views):
     strviews = views.replace(".", "")
     try:
@@ -63,6 +66,7 @@ def convertviews(views):
                 spazio = count - 1
         intviews = int(strviews[:spazio])
     return intviews
+
 
 def calculateaverage(date, views):
     intviews = convertviews(views)
@@ -80,7 +84,7 @@ def downloadimage(url, title):
         print("Connessione persa, riprovare più tardi. Grazie!")
         exit(1)
     directory = "images/"
-    #ceck of the directory images
+    # ceck of the directory images
     try:
         os.stat(directory)
     except:
@@ -101,10 +105,13 @@ def downloadimage(url, title):
     output.close()
     return path
 
+
 def checksource():
     if os.stat('source.txt').st_size == 0:
         f1 = open('source.txt', 'a+')  # file used to store the results
         f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o' + "\n")
+
+
 def counter(start, now, iteration):
     iter = iteration
     now = time.time()

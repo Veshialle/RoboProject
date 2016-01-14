@@ -9,12 +9,13 @@ except:
     print("Valore non valido, far ripartire il crawler")
     exit(1)
 
-f1 = open('results.txt', 'a+', encoding='utf8' )  # file used to store the results
+f1 = open('results.txt', 'a+', encoding='utf8')  # file used to store the results
 f2 = open('source.txt', 'a+')  # file used to get the starting url
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
-f4 = open('log.txt', 'a') #the file log is used to store the time spent for the execution
+f4 = open('log.txt', 'a')  # the file log is used to store the time spent for the execution
 links = []
 visitedlinks = []
+
 
 def crawler(maxite):
     count = 0
@@ -50,7 +51,7 @@ def crawler(maxite):
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
                 averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
-            #downloading the preview of the video
+            # downloading the preview of the video
             for img in soup.findAll('meta',{'property': "og:image"}):
                 img1 = img.get('content')
                 path = PRobot_HandlingData.downloadimage(img1, title1)
@@ -65,7 +66,6 @@ def crawler(maxite):
                     links.append(link1)        # if not, add it to the list
                     f2.write("\n" + link1)       # and write it on the source file
 
-
         elif url in visitedlinks:
             maxite += 1
 
@@ -74,7 +74,7 @@ def crawler(maxite):
 
 f1.seek(0)
 f2.seek(0)
-#initializing the source.txt file in case of the empty (or inexistent) file
+# initializing the source.txt file in case of the empty (or inexistent) file
 PRobot_HandlingData.checksource()
 
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
