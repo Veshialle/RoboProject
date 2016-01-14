@@ -70,9 +70,9 @@ def convertviews(views):
 
 def calculateaverage(date, views):
     intviews = convertviews(views)
-    chargeddate = calculatedate(date)
+    uppeddate = calculatedate(date)
     today = calculatedate(time.strftime("%d/%b/%Y"))
-    totaldays = today - chargeddate
+    totaldays = today - uppeddate
     averageviews = intviews / totaldays
     return averageviews
 
@@ -122,5 +122,5 @@ def counter(start, now, iteration):
     seconds = timetook % 60
     milliseconds = (seconds % 1) * (10 ** 3)
     seconds = seconds // 1
-    orario = "The execution of " + str(iter) + " iteration took: " + str(int(hour)) + " hour, " + str(int(minutes)) + " minutes, " + str(int(seconds)) + " seconds " + str(int(milliseconds)) + " milliseconds\n"
+    orario = "The execution of " + str(iter) + " iteration took: " + str(int(hour)) + "h " + str(int(minutes)) + "m " + str(int(seconds)) + "s " + str(int(milliseconds)) + "ms\n"
     return orario

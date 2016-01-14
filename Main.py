@@ -38,6 +38,7 @@ def crawler(maxite):
             for title in soup.findAll("span", {'id': 'eow-title'}, {'class': 'watch-title'}):
                 title1 = title.get('title')
                 f1.write("Title: " + title1 + "\n")  # writing on results.txt
+
             # finding the date of the video
             for date in soup.findAll("strong", {'class': 'watch-time-text'}):
                 date1 = date.string
@@ -51,6 +52,7 @@ def crawler(maxite):
                 f1.write("Views: " + views1 + "\n")  # writing on results.txt
                 averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
+
             # downloading the preview of the video
             for img in soup.findAll('meta',{'property': "og:image"}):
                 img1 = img.get('content')
@@ -70,23 +72,26 @@ def crawler(maxite):
             maxite += 1
 
         count += 1
+        print("current iteration: " + str(count) + "\n")
+
 
 
 f1.seek(0)
 f2.seek(0)
-# initializing the source.txt file in case of the empty (or inexistent) file
-PRobot_HandlingData.checksource()
+
+PRobot_HandlingData.checksource()  # initializing the source.txt file in case of the empty (or inexistent) file
 
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
     links.append(url1)
-PRobot_HandlingData.checksource()
+
 f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' mode sets the pointer at the end)
+
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
-crawler(iteration) # starting the crawler
+
+crawler(iteration)  # starting the crawler
 f1.close()  # closing streams
 f2.close()
 f3.close()
-f4.write(PRobot_HandlingData.counter(start, time.time() , iteration))
-
+f4.write(PRobot_HandlingData.counter(start, time.time(), iteration))
