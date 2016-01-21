@@ -120,7 +120,7 @@ def checksource():
 
 
 # function used to write the total time of execution
-def counter(start, iterdone):
+def counter(start, numbers):
     now = time.time()
     timetook = now - start
     mins = timetook // 60
@@ -129,8 +129,9 @@ def counter(start, iterdone):
     seconds = timetook % 60
     milliseconds = (seconds % 1) * (10 ** 3)
     seconds = seconds // 1
-
-    f4.write("The execution of " + str(iterdone[0]) + " video analyzed and " + str(iterdone[1]) + " iteration took : ")
+    iterdone = numbers[0]
+    alliter = numbers[1]
+    f4.write("The execution of " + str(iterdone) + " video analyzed and " + str(alliter) + " iteration took : ")
     if hour != 0:
         f4.write(str(int(hour)) + "h ")
     if minutes != 0:
