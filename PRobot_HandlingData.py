@@ -4,56 +4,59 @@ import urllib.request
 import os
 
 
+f4 = open('log.txt', 'a')  # the file log is used to store the time spent for the execution
+
+
+# function used to convert the date from string format to number of days
 def calculatedate(date):
     month = 0
-    newdate = 0
 
     if date[0] == 'P':
-        newdate = date[14:]  # erasing "Pubblicato il "
+        newdate = date[14:]  # removing "Pubblicato il "
 
     elif date[0] == 'C':
-        newdate = date[12:]  # erasing "Caricato il "
+        newdate = date[12:]  # removing "Caricato il "
     else:
         newdate = date
     day = int(newdate[:2])  # extracting number of the day
-    Wmonth = newdate[3:6]  # extracting number of days from the past months
-    if (Wmonth == 'gen') or (Wmonth == 'Jan'):
+    wmonth = newdate[3:6]  # extracting number of days from the past months
+    if (wmonth == 'gen') or (wmonth == 'Jan'):
         month = 00
-    elif (Wmonth == 'feb') or (Wmonth == 'Feb'):
+    elif (wmonth == 'feb') or (wmonth == 'Feb'):
         month = 31
-    elif (Wmonth == 'mar') or (Wmonth == 'Mar'):
+    elif (wmonth == 'mar') or (wmonth == 'Mar'):
         month = 59
-    elif (Wmonth == 'apr') or (Wmonth == 'Apr'):
+    elif (wmonth == 'apr') or (wmonth == 'Apr'):
         month = 90
-    elif (Wmonth == 'mag') or (Wmonth == 'May'):
+    elif (wmonth == 'mag') or (wmonth == 'May'):
         month = 120
-    elif (Wmonth == 'giu') or (Wmonth == 'Jun'):
+    elif (wmonth == 'giu') or (wmonth == 'Jun'):
         month = 151
-    elif (Wmonth == 'lug') or (Wmonth == 'Jul'):
+    elif (wmonth == 'lug') or (wmonth == 'Jul'):
         month = 181
-    elif (Wmonth == 'ago') or (Wmonth == 'Aug'):
+    elif (wmonth == 'ago') or (wmonth == 'Aug'):
         month = 212
-    elif (Wmonth == 'set') or (Wmonth == 'Sep'):
+    elif (wmonth == 'set') or (wmonth == 'Sep'):
         month = 243
-    elif (Wmonth == 'ott') or (Wmonth == 'Oct'):
+    elif (wmonth == 'ott') or (wmonth == 'Oct'):
         month = 273
-    elif (Wmonth == 'nov') or (Wmonth == 'Nov'):
+    elif (wmonth == 'nov') or (wmonth == 'Nov'):
         month = 304
-    elif (Wmonth == 'dic') or (Wmonth == 'Dec'):
+    elif (wmonth == 'dic') or (wmonth == 'Dec'):
         month = 334
     year = int(newdate[7:11])  # extracting year
 
     if (calendar.isleap(year)) and (month > 59):
         month += 1
 
-    year = (year - 2005)            # subracted the year when youtube came to the great world of internet and coverted
-    moredaysforme = year // 4        # counting bissextile years from 2005 to the year before this
-    year = year * 365 + moredaysforme   # this conversion is not optimized for all the non-bissextile years
-    days = (day + month + year)  # total number of days from the day christ was born
-                                    # till the day the video was uploaded on youtube
+    year = (year - 2005)
+    extradays = year // 4           # counting bissextile years from 2005 to the year before this
+    year = year * 365 + extradays   # this conversion is not optimized for all the non-bissextile years
+    days = (day + month + year)
     return days
 
 
+# function used to "clean" the number of views removing dots ("12.345.678") and words ("874 visualizzazioni")
 def convertviews(views):
     strviews = views.replace(".", "")
     try:
@@ -68,6 +71,7 @@ def convertviews(views):
     return intviews
 
 
+# function used to calculate the average number of views per day
 def calculateaverage(date, views):
     intviews = convertviews(views)
     uppeddate = calculatedate(date)
@@ -77,19 +81,20 @@ def calculateaverage(date, views):
     return averageviews
 
 
+# function used to download the image preview of the video
 def downloadimage(url, title):
     try:
         resource = urllib.request.urlopen(url)
     except:
-        print("Connessione persa, riprovare più tardi. Grazie!")
+        print("Connection lost. Retry.")
         exit(1)
     directory = "images/"
-    # ceck of the directory images
+    # check if the directory images is missing or not
     try:
         os.stat(directory)
     except:
         os.mkdir(directory)
-    title1 = title.replace('?', '')
+    title1 = title.replace('?', '')         # substituting unallowed characters in file names
     title2 = title1.replace('/', '')
     title3 = title2.replace(':', '')
     title4 = title3.replace('*', '')
@@ -98,7 +103,7 @@ def downloadimage(url, title):
     title7 = title6.replace('|', '')
     title8 = title7.replace('"', '')
     title9 = title8.replace("'", "")
-    title10 = title9.replace(chr(92), "")
+    title10 = title9.replace(chr(92), "")   # char(92) == " \ "
     path = directory + title10 + ".jpg"
     output = open(path, "wb")
     output.write(resource.read())
@@ -106,14 +111,15 @@ def downloadimage(url, title):
     return path
 
 
+# function used to check if source.txt is empty or missing
 def checksource():
     if os.stat('source.txt').st_size == 0:
         f1 = open('source.txt', 'a+')  # file used to store the results
         f1.write('https://www.youtube.com/watch?v=vabnZ9-ex7o' + "\n")
 
 
-def counter(start, now, iteration):
-    iter = iteration
+# function used to write the total time of execution
+def counter(start, iteration):
     now = time.time()
     timetook = now - start
     mins = timetook // 60
@@ -122,5 +128,13 @@ def counter(start, now, iteration):
     seconds = timetook % 60
     milliseconds = (seconds % 1) * (10 ** 3)
     seconds = seconds // 1
-    orario = "The execution of " + str(iter) + " iteration took: " + str(int(hour)) + "h " + str(int(minutes)) + "m " + str(int(seconds)) + "s " + str(int(milliseconds)) + "ms\n"
-    return orario
+
+    f4.write("The execution of " + str(iteration) + " iterations took: ")
+    if hour != 0:
+        f4.write(str(int(hour)) + "h ")
+    if minutes != 0:
+        f4.write(str(int(minutes)) + "m ")
+    if seconds != 0:
+        f4.write(str(int(seconds)) + "s ")
+    if milliseconds != 0:
+        f4.write(str(int(milliseconds)) + "ms \n")

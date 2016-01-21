@@ -10,9 +10,8 @@ except:
     exit(1)
 
 f1 = open('results.txt', 'a+', encoding='utf8')  # file used to store the results
-f2 = open('source.txt', 'a+')  # file used to get the starting url
+f2 = open('source.txt', 'a+')  # file used to get the starting url and store the links to be visited
 f3 = open('seen.txt', 'a+')  # file used to store the visited urls
-f4 = open('log.txt', 'a')  # the file log is used to store the time spent for the execution
 links = []
 visitedlinks = []
 
@@ -23,7 +22,7 @@ def crawler(maxite):
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
             break
-        if url not in visitedlinks:  # == if i've not seen the video yet
+        if url not in visitedlinks:  # if the video hasn't been analyzed
             visitedlinks.append(url)
             f3.write(url + "\n")
             try:
@@ -53,8 +52,8 @@ def crawler(maxite):
                 averageviews = PRobot_HandlingData.calculateaverage(date1, views1)
                 f1.write("Average views per day: " + str(averageviews) + "\n")
 
-            # downloading the preview of the video
-            for img in soup.findAll('meta',{'property': "og:image"}):
+            # downloading the preview image of the video
+            for img in soup.findAll('meta', {'property': "og:image"}):
                 img1 = img.get('content')
                 path = PRobot_HandlingData.downloadimage(img1, title1)
                 f1.write("Directory and name of the downloaded image: " + path + "\n")
@@ -66,7 +65,7 @@ def crawler(maxite):
                 link1 = "https://www.youtube.com" + link.get('href')
                 if link1 not in visitedlinks:  # checking if the link has already been visited
                     links.append(link1)        # if not, add it to the list
-                    f2.write("\n" + link1)       # and write it on the source file
+                    f2.write("\n" + link1)     # and write it on the source file
 
         elif url in visitedlinks:
             maxite += 1
@@ -75,23 +74,25 @@ def crawler(maxite):
         print("current iteration: " + str(count) + "\n")
 
 
-
 f1.seek(0)
 f2.seek(0)
 
-PRobot_HandlingData.checksource()  # initializing the source.txt file in case of the empty (or inexistent) file
+PRobot_HandlingData.checksource()  # initializing the source.txt file in case of the empty (or missing) file
 
 for url1 in f2.readlines():  # setting up the list of the urls to be seen
     links.append(url1)
 
-f3.seek(0)  # setting the pointer at the begin of the file (normally using 'a+' mode sets the pointer at the end)
+f3.seek(0)  # setting the pointer at the beginning of the file (normally using 'a+' mode sets the pointer at the end)
 
 for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
 
 crawler(iteration)  # starting the crawler
+
+PRobot_HandlingData.counter(start, iteration)  # writing total execution time on log.txt
+
 f1.close()  # closing streams
 f2.close()
 f3.close()
-f4.write(PRobot_HandlingData.counter(start, time.time(), iteration))
+
