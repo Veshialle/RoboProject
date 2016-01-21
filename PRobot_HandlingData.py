@@ -82,11 +82,12 @@ def calculateaverage(date, views):
 
 
 # function used to download the image preview of the video
-def downloadimage(url, title):
+def downloadimage(url, title, start, iterdone):
     try:
         resource = urllib.request.urlopen(url)
     except:
-        print("Connection lost. Retry.")
+        counter(start, iterdone)
+        print("Connection lost. Please retry later.")
         exit(1)
     directory = "images/"
     # check if the directory images is missing or not
@@ -119,7 +120,7 @@ def checksource():
 
 
 # function used to write the total time of execution
-def counter(start, iteration):
+def counter(start, iterdone):
     now = time.time()
     timetook = now - start
     mins = timetook // 60
@@ -129,7 +130,7 @@ def counter(start, iteration):
     milliseconds = (seconds % 1) * (10 ** 3)
     seconds = seconds // 1
 
-    f4.write("The execution of " + str(iteration) + " iterations took: ")
+    f4.write("The execution of " + str(iterdone[0]) + " video analyzed and " + str(iterdone[1]) + " iteration took : ")
     if hour != 0:
         f4.write(str(int(hour)) + "h ")
     if minutes != 0:

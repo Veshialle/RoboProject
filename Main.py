@@ -16,8 +16,9 @@ links = []
 visitedlinks = []
 
 
-def crawler(maxite):
+def crawler(maxite, start):
     count = 0
+    iterdone = 0
     for url in links:
         if count == maxite:  # if i reached the max number of iterations
             print("\nDone!")
@@ -28,8 +29,11 @@ def crawler(maxite):
             try:
                 source_code = requests.get(str(url))
             except:
-                print("Connessione persa, riprovare più tardi. Grazie!")
+                PRobot_HandlingData.counter(start, iterdone)
+                print("Connection lost. Please retry later.")
                 exit(1)
+            finally:
+                iterdone += 1
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, "html.parser")
 
@@ -55,7 +59,7 @@ def crawler(maxite):
             # downloading the preview image of the video
             for img in soup.findAll('meta', {'property': "og:image"}):
                 img1 = img.get('content')
-                path = PRobot_HandlingData.downloadimage(img1, title1)
+                path = PRobot_HandlingData.downloadimage(img1, title1, start, iterdone)
                 f1.write("Directory and name of the downloaded image: " + path + "\n")
             f1.write("Link del video: " + url + "\n")
             f1.write("\n \n")
@@ -72,6 +76,7 @@ def crawler(maxite):
 
         count += 1
         print("current iteration: " + str(count) + "\n")
+    return iterdone, maxite
 
 
 f1.seek(0)
@@ -88,9 +93,9 @@ for url2 in f3.readlines():  # setting up the list of the visited links
     if url2 not in visitedlinks:
         visitedlinks.append(url2)
 
-crawler(iteration)  # starting the crawler
+iterdone = crawler(iteration, start)  # starting the crawler
 
-PRobot_HandlingData.counter(start, iteration)  # writing total execution time on log.txt
+PRobot_HandlingData.counter(start, iterdone)  # writing total execution time on log.txt
 
 f1.close()  # closing streams
 f2.close()
